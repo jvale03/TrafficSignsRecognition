@@ -24,11 +24,12 @@ def image_labels():
             try:
                 image = Image.open(path + '/' + a) 
                 image = image.resize((30,30)) 
-                image = np.array(image) 
+                image = np.array(image) / 255.0
                 data.append(image) 
                 labels.append(i) 
-            except: 
-                print("Error loading image") 
+            except Exception as e:
+                print(f"\033[31mError loading img: {e}")
+                return None
 
     # convert lists to numpy arrays
     data = np.array(data)
