@@ -5,7 +5,7 @@ import os
 from sklearn.metrics import accuracy_score
 from keras import Input
 from keras.models import Sequential
-from keras.layers import Conv2D, MaxPool2D, Dense, Flatten, Dropout
+from keras.layers import Conv2D, MaxPool2D, Dense, Flatten, Dropout, GlobalAveragePooling2D
 from DataExploration import data_exploration
 
 
@@ -19,15 +19,15 @@ def model_builder():
     try:
         model.add(Input(shape=X_t1.shape[1:]))
         model.add(Conv2D(filters=32, kernel_size=(5,5), activation='relu'))
-        model.add(Conv2D(filters=32, kernel_size=(5,5), activation='relu'))
+        model.add(Conv2D(filters=64, kernel_size=(5,5), activation='relu'))
         model.add(MaxPool2D(pool_size=(2, 2)))
         model.add(Dropout(rate=0.25))
         model.add(Conv2D(filters=64, kernel_size=(3, 3), activation='relu'))
-        model.add(Conv2D(filters=64, kernel_size=(3, 3), activation='relu'))
+        model.add(Conv2D(filters=128, kernel_size=(3, 3), activation='relu'))
         model.add(MaxPool2D(pool_size=(2, 2)))
         model.add(Dropout(rate=0.25))
-        model.add(Flatten())
-        model.add(Dense(256, activation='relu'))
+        model.add(GlobalAveragePooling2D())
+        model.add(Dense(512, activation='relu'))
         model.add(Dropout(rate=0.5))
         model.add(Dense(43, activation='softmax'))
     except:
@@ -35,7 +35,7 @@ def model_builder():
 
 def model_compilation():
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-    eps = 15
+    eps = 10
     model.fit(X_t1, y_t1, batch_size=32, epochs=eps, validation_data=(X_t2, y_t2))
 
 def accuracy_test():

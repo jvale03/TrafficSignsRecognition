@@ -4,12 +4,14 @@ import os
 from sklearn.model_selection import train_test_split 
 from keras.utils import to_categorical 
 
+
 data = []
 labels = []
 classes = 43
 
 # get the projects path
 cur_path = os.getcwd()
+
 
 # on "train" folder, each subfolder represents a class
 def image_labels():
@@ -37,7 +39,7 @@ def image_labels():
 
 
 def data_split():
-    X_t1, X_t2, y_t1, y_t2 = train_test_split(data, labels, test_size=0.2, random_state=42)
+    X_t1, X_t2, y_t1, y_t2 = train_test_split(data, labels, test_size=0.25, random_state=42)
 
     # labels -> one hot encoding
     y_t1 = to_categorical(y_t1, 43)
