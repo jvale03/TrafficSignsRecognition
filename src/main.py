@@ -21,6 +21,8 @@ def main():
         choice = input("1: Train model\n2: Check image\nInput: ")
         if choice.isdigit():
             choice = int(choice)
+            if choice == 27:
+                break
             if choice > 2 or choice < 1:
                 print("\033[31mInvalid!\033[m")
             else:
@@ -28,6 +30,7 @@ def main():
         else:
             print("\033[31mInvalid!\033[m") 
     if choice == 1:
+        print("\033[32mTraining model!\033[m")
         try:
             CNNModel.model_builder()
             CNNModel.model_compilation()
@@ -54,9 +57,20 @@ def main():
 
         img_path = files[img_opt]
 
-        traf_sign = Predict.classify_img(img_path)
+        model = Predict.my_load_model()
+        traf_sign = Predict.classify_img(model,img_path)
 
         print(traf_sign)
+    
+    elif choice == 27:
+        model = Predict.my_load_model()
+        for img in os.listdir(path):
+            if "DS_Store" not in img:
+                file_path = os.path.join(path,img)
+                traf_sign = Predict.classify_img(model,file_path)
+                print(f"{img} -> {traf_sign}")
+
+
 
 
 main()

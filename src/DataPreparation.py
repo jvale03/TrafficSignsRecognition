@@ -1,5 +1,5 @@
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.utils import array_to_img, img_to_array, load_img
+from tensorflow.keras.utils import img_to_array, load_img
 import os
 from datetime import datetime
 
@@ -16,7 +16,7 @@ def imgs_augmentation_train():
                 try:
                     gen_images(img_path,folder_path)
                 except Exception as e:
-                    print(f"\033[31mError generating imgs: {e}")
+                    print(f"\033[31mError generating imgs: {e}\033[m")
 
 
 def remove_img_augmentation():
@@ -31,14 +31,16 @@ def remove_img_augmentation():
                     try:
                         os.remove(img_path)
                     except Exception as e:
-                        print(f"\033[31mError removing img: {e}")
+                        print(f"\033[31mError removing img: {e}\033[m")
         
 def gen_images(img_path,dir):
     datagen = ImageDataGenerator(
         rotation_range = 30,
+        width_shift_range = 0.2,
+        height_shift_range = 0.2,
         shear_range = 0.2,
-        zoom_range = 0.2,
-        brightness_range = (0.6, 1.4))
+        zoom_range = 0.3,
+        brightness_range = (0.4, 1.6))
     
     img = load_img(img_path)
     img_array = img_to_array(img)
@@ -51,7 +53,7 @@ def gen_images(img_path,dir):
                           save_prefix =f'image{timestamp}{i}', save_format ='png'):
         i+=1
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        if i<5:
+        if i<6:
             break
 
 def main():
@@ -71,10 +73,10 @@ def main():
         print("\033[32mGenerating images...\033[m")
         try:
             imgs_augmentation_train()
-            print("\033[32mOmages generated!\033[m")
+            print("\033[32mImages generated!\033[m")
 
         except Exception as e:
-            print(f"\033[31mError generating imgs: {e}")
+            print(f"\033[31mError generating imgs: {e}\033[m")
     elif choice == 2:
         print("\033[32mRemoving images...\033[m")
         try:
@@ -82,7 +84,7 @@ def main():
             print("\033[32mImages removed!\033[m")
 
         except Exception as e:
-            print(f"\033[31mError removing imgs: {e}")
+            print(f"\033[31mError removing imgs: {e}\033[m")
     else:
         return 0
 main()

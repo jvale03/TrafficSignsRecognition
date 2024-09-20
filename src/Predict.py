@@ -48,25 +48,31 @@ classes = { 1:'Speed limit (20km/h)',
            43:'End no passing vehicle with a weight greater than 3.5 tons' }
 
 
-def classify_img(img_path):
-    image = None
-
+def my_load_model():
     print("\033[32mLoading model...\033[m")
     try: 
         model = load_model("../Model/TrafficClassifier.keras")
         print("\033[32mModel loaded!\033[m")
+        return model
 
     except Exception as e:
-        print(f"\033[31mError: {e}")
+        print(f"\033[31mError: {e}\033[m")
         return None
 
+
+def classify_img(model,img_path):
+    image = None    
+
+    if model == None:
+        return None
+    
     try:
         image = Image.open(img_path).convert('RGB')
         image = image.resize((30, 30))
         image = np.expand_dims(image, axis=0) 
         image = np.array(image) / 255.0
     except Exception as e:
-        print(f"\033[31mError loading img: {e}")
+        print(f"\033[31mError loading img: {e}\033[m")
         return None
     
     pred = model.predict(image)

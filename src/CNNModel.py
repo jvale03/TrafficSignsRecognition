@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 from PIL import Image
-import os
 from sklearn.metrics import accuracy_score
 from keras import Input
 from keras.models import Sequential
@@ -22,11 +21,12 @@ def model_builder():
         model.add(Conv2D(filters=64, kernel_size=(5,5), activation='relu'))
         model.add(MaxPool2D(pool_size=(2, 2)))
         model.add(Dropout(rate=0.25))
-        model.add(Conv2D(filters=64, kernel_size=(3, 3), activation='relu'))
         model.add(Conv2D(filters=128, kernel_size=(3, 3), activation='relu'))
+        model.add(Conv2D(filters=256, kernel_size=(3, 3), activation='relu'))
         model.add(MaxPool2D(pool_size=(2, 2)))
         model.add(Dropout(rate=0.25))
         model.add(GlobalAveragePooling2D())
+        model.add(Flatten())
         model.add(Dense(512, activation='relu'))
         model.add(Dropout(rate=0.5))
         model.add(Dense(43, activation='softmax'))
@@ -35,7 +35,7 @@ def model_builder():
 
 def model_compilation():
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-    eps = 10
+    eps = 11
     model.fit(X_t1, y_t1, batch_size=32, epochs=eps, validation_data=(X_t2, y_t2))
 
 def accuracy_test():
@@ -52,7 +52,7 @@ def accuracy_test():
             image = np.array(image) / 255.0
             data.append(image)
         except Exception as e:
-            print(f"\033[31mError loading img: {e}")
+            print(f"\033[31mError loading img: {e}\033[m")
             return None
 
     X_test = np.array(data) 
@@ -71,4 +71,4 @@ def save_model():
         print("\033[32mModel saved...\033[m")
         
     except Exception as e:
-        print(f"\033[31mError: {e}")
+        print(f"\033[31mError: {e}\033[m")
