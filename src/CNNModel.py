@@ -4,7 +4,7 @@ from PIL import Image
 from sklearn.metrics import accuracy_score
 from keras import Input
 from keras.models import Sequential
-from keras.layers import Conv2D, MaxPool2D, Dense, Flatten, Dropout, GlobalAveragePooling2D
+from keras.layers import Conv2D, MaxPool2D, Dense, Flatten, Dropout, GlobalAveragePooling2D, BatchNormalization
 from DataExploration import data_exploration
 
 
@@ -17,16 +17,22 @@ def model_builder():
     X_t1, X_t2, y_t1, y_t2 = data_exploration()
     try:
         model.add(Input(shape=X_t1.shape[1:]))
-        model.add(Conv2D(filters=32, kernel_size=(5,5), activation='relu'))
-        model.add(Conv2D(filters=64, kernel_size=(5,5), activation='relu'))
+        # block 1
+        model.add(Conv2D(filters=32, kernel_size=(3,3), padding='same', activation='relu'))
+        model.add(BatchNormalization())
+        model.add(Conv2D(filters=64, kernel_size=(3,3), padding='same', activation='relu'))
+        model.add(BatchNormalization())
         model.add(MaxPool2D(pool_size=(2, 2)))
         model.add(Dropout(rate=0.25))
-        model.add(Conv2D(filters=128, kernel_size=(3, 3), activation='relu'))
-        model.add(Conv2D(filters=256, kernel_size=(3, 3), activation='relu'))
+        # block 2
+        model.add(Conv2D(filters=128, kernel_size=(3, 3), padding='same', activation='relu'))
+        model.add(BatchNormalization())
+        model.add(Conv2D(filters=256, kernel_size=(3, 3), padding='same', activation='relu'))
+        model.add(BatchNormalization())
         model.add(MaxPool2D(pool_size=(2, 2)))
         model.add(Dropout(rate=0.25))
+        # block 3
         model.add(GlobalAveragePooling2D())
-        model.add(Flatten())
         model.add(Dense(512, activation='relu'))
         model.add(Dropout(rate=0.5))
         model.add(Dense(43, activation='softmax'))

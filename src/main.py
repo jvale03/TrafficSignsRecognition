@@ -30,7 +30,7 @@ def main():
         else:
             print("\033[31mInvalid!\033[m") 
     if choice == 1:
-        print("\033[32mTraining model!\033[m")
+        print("\033[32mTraining model...\033[m")
         try:
             CNNModel.model_builder()
             CNNModel.model_compilation()
