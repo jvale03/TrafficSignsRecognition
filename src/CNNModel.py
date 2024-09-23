@@ -36,8 +36,8 @@ def model_builder():
         model.add(Dense(512, activation='relu'))
         model.add(Dropout(rate=0.5))
         model.add(Dense(43, activation='softmax'))
-    except:
-        print("\033[31mError building model!\033[m")
+    except Exception as e:
+        print(f"\033[31mError building model: {e}\033[m")
 
 def model_compilation():
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])

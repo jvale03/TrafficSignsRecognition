@@ -26,11 +26,13 @@ def image_labels():
             try:
                 image = Image.open(path + '/' + a) 
                 image = image.resize((30,30)) 
-                image = np.array(image) / 255.0
-                data.append(image) 
-                labels.append(i) 
+                image = np.array(image)
+                if image.shape == (30, 30, 3):  # Check that image is the right shape
+                    image = np.array(image) / 255.0
+                    data.append(image) 
+                    labels.append(i) 
             except Exception as e:
-                print(f"\033[31mError loading img: {e}")
+                print(f"\033[31mError loading img: {e}\033[m")
                 return None
 
     # convert lists to numpy arrays
@@ -50,3 +52,4 @@ def data_split():
 def data_exploration():
     image_labels()
     return data_split()
+

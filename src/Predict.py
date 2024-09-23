@@ -77,6 +77,9 @@ def classify_img(model,img_path):
     
     pred = model.predict(image)
     pred_classes = np.argmax(pred, axis=1).item()
+    prob = np.max(pred)
+    if prob < 0.65: # accept only if the model is sure about is answer
+        return "Undefined"
     sign = classes[pred_classes+1]
 
     return sign 
