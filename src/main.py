@@ -1,6 +1,9 @@
 import CNNModel
 import Predict
 import os
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 path = "../Images"
 db_path = os.path.join(os.getcwd(),"../DataSet/")
@@ -9,6 +12,11 @@ db_path = os.path.join(os.getcwd(),"../DataSet/")
 def list_files():
     files = []
     i=0
+
+    if not os.path.exists(path):
+        logging.warning(f"Path does not exists: {path}")
+        return None
+
     for file in os.listdir(path):
         print(f"{i}: {file}")
         file_path = os.path.join(path,file)
@@ -21,17 +29,24 @@ def remove_trash():
     global db_path
     boolean = False
     db_path = os.path.join(db_path,"Train")
+
+    if not os.path.exists(db_path):
+        logging.warning(f"\033[31mPath does not exists: {db_path}\033[m")
+        return
+
     for folder in os.listdir(db_path):
         folder_path = os.path.join(db_path,folder)
         if os.path.isdir(folder_path): # check if it is a directory
             for img in os.listdir(folder_path):
                 if not img.endswith(".png"):
-                    boolean = True
                     img_path = os.path.join(folder_path,img)
                     try:
+                        boolean = True
                         os.remove(img_path)
+
                     except Exception as e:
-                        print(f"\033[31mError removing trash: {e}\033[m")
+                        logging.error(f"\033[31mError removing trash {img}: {e}\033[m")
+
     if boolean == True:
         print(f"\033[32mTrash removed!\033[m")
 
@@ -59,15 +74,19 @@ def main():
                 CNNModel.model_builder()
                 CNNModel.model_compilation()
                 CNNModel.accuracy_test()
+                print("\032[32mModel trained and tested successfully.\033[m")
                 
             except Exception as e:
-                print(f"\033[31mError creating model: {e}\033[m")
+                logging.error(f"\033[31mError during model training: {e}\033[m")
 
         elif choice == 2:
             traf_sign = None
             img_opt = 0
 
             files = list_files()
+            if files is None:
+                return 
+            
             while True:
                 img_opt = input("Choose one image: ")
                 if img_opt.isdigit():
@@ -94,8 +113,9 @@ def main():
                     traf_sign = Predict.classify_img(model,file_path)
                     print(f"\033[33m{img} -> {traf_sign}\033[m")
 
-    except:
-        print("\033[31mStoping...\033[m")
+    except Exception as e:
+        logging.error(f"\033[31mError in main: {e}\033[m")
 
 
-main()
+if __name__ == "__main__":
+    main()

@@ -1,55 +1,59 @@
 import numpy as np
 from PIL import Image
-import os 
-from sklearn.model_selection import train_test_split 
-from keras.utils import to_categorical 
+import os
+from sklearn.model_selection import train_test_split
+from keras.utils import to_categorical
+import logging
 
+# Configurar logging
+logging.basicConfig(level=logging.INFO)
 
-data = []
-labels = []
 classes = 43
 
-# get the projects path
+# Get the project's path
 cur_path = os.getcwd()
 
-
-# on "train" folder, each subfolder represents a class
 def image_labels():
-    global data, labels
+    data = []
+    labels = []
     for i in range(classes):
-        # iterate over each class
-        path = os.path.join(cur_path,'../DataSet/Train', str(i)) 
+        # Iterate over each class
+        path = os.path.join(cur_path, '../DataSet/Train', str(i))
+
+        if not os.path.exists(path):
+            logging.warning(f"\033[31mPath does not exist: {path}\033[m")
+            continue
+
         images = os.listdir(path)
 
-        # iterate over each image to resize them and convert in an np.array
-        for a in images:
+        # Iterate over each image to resize and convert to an np.array
+        for image_name in images:
+            image_path = os.path.join(path, image_name)
+
             try:
-                image = Image.open(path + '/' + a) 
-                image = image.resize((30,30)) 
-                image = np.array(image)
-                if image.shape == (30, 30, 3):  # Check that image is the right shape
-                    image = np.array(image) / 255.0
-                    data.append(image) 
-                    labels.append(i) 
-            except Exception as e:
-                print(f"\033[31mError loading img: {e}\033[m")
-                return None
+                with Image.open(image_path) as img:
+                    img = img.resize((30, 30))
+                    img_array = np.array(img)
 
-    # convert lists to numpy arrays
-    data = np.array(data)
-    labels = np.array(labels)
+                    if img_array.shape == (30, 30, 3):  # Check if the image is the correct shape
+                        img_array = img_array / 255.0
+                        data.append(img_array)
+                        labels.append(i)
 
+            except (OSError, ValueError, Exception) as e:
+                logging.error(f"\033[31mError loading image {image_name}: {e}\033[m")
 
-def data_split():
+    return np.array(data), np.array(labels)
+
+def data_split(data, labels):
     X_t1, X_t2, y_t1, y_t2 = train_test_split(data, labels, test_size=0.25, random_state=42)
 
-    # labels -> one hot encoding
-    y_t1 = to_categorical(y_t1, 43)
-    y_t2 = to_categorical(y_t2, 43) 
+    # Labels -> one hot encoding
+    y_t1 = to_categorical(y_t1, num_classes=classes)
+    y_t2 = to_categorical(y_t2, num_classes=classes)
 
     return X_t1, X_t2, y_t1, y_t2
 
 def data_exploration():
-    image_labels()
-    return data_split()
-
+    data, labels = image_labels()
+    return data_split(data, labels)
