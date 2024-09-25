@@ -54,10 +54,10 @@ classes = {
 
 
 def my_load_model(model_path="../Model/TrafficClassifier.keras"):
-    logging.info("\033[32mLoading model...\033[m")
+    print("\033[32mLoading model...\033[m")
     try:
         model = load_model(model_path)
-        logging.info("\033[32mModel loaded!\033[m")
+        print("\033[32mModel loaded!\033[m")
         return model
     except (OSError, ValueError) as e:
         logging.error(f"\033[31mError 'my_load_model': {e}\033[m")
