@@ -71,9 +71,9 @@ def main():
             remove_trash()
             print("\033[32mTraining model...\033[m")
             try:
-                CNNModel.model_builder()
-                CNNModel.model_compilation()
-                CNNModel.accuracy_test()
+                model, X_t1, X_t2, y_t1, y_t2 = CNNModel.model_builder()
+                CNNModel.model_compilation(model, X_t1, X_t2, y_t1, y_t2)
+                CNNModel.accuracy_test(model)
                 print("\032[32mModel trained and tested successfully.\033[m")
                 
             except Exception as e:

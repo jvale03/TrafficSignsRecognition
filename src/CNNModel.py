@@ -43,7 +43,7 @@ def model_builder():
         model.add(Dense(43, activation='softmax'))
 
     except Exception as e:
-        logging.error(f"Error building model: {e}\n'model_builder'")
+        logging.error(f"\033[31mError building model: {e}\n'model_builder'\033[m")
         return None, None, None, None
 
     return model, X_t1, X_t2, y_t1, y_t2
@@ -66,7 +66,7 @@ def accuracy_test(model):
                 img_array = np.array(image) / 255.0
                 data.append(img_array)
         except Exception as e:
-            logging.error(f"Error loading image: {e}\n'accuracy_test'")
+            logging.error(f"\033[31mError loading image: {e}\n'accuracy_test'\033[m")
             continue
 
     X_test = np.array(data)
@@ -74,17 +74,27 @@ def accuracy_test(model):
     pred_classes = np.argmax(pred, axis=1)
 
     accuracy = accuracy_score(labels, pred_classes)
-    logging.info(f"Accuracy: {accuracy}")
+    print(f"Accuracy: {accuracy}")
 
     save_model(model)
 
 def save_model(model):
-    logging.info("Saving model...")
+    logging.info("\033[32mSaving model...\033[m")
     try:
         model.save("../Model/TrafficClassifier.keras")
-        logging.info("Model saved successfully.")
+        print("\033[32mModel saved successfully.\033[m")
     except Exception as e:
-        logging.error(f"Error saving model: {e}")
+        logging.error(f"\033[31mError saving model: {e}\033[m")
+
+# def save_model(model):
+#     logging.info("Saving model...")
+#     try:
+#         model.save("TrafficClassifier.keras")
+#         print("Model saved successfully.")
+#         files.download("TrafficClassifier.keras")
+#         print("Model downloaded successfully.")
+#     except Exception as e:
+#         logging.error(f"Error saving model: {e}")
 
 def main():
     model, X_t1, X_t2, y_t1, y_t2 = model_builder()
@@ -94,3 +104,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
