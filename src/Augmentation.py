@@ -85,26 +85,26 @@ def main():
             if choice.isdigit():
                 choice = int(choice)
                 if choice > 4 or choice < 1:
-                    logging.warning("\033[31mInvalid choice!\033[m")
+                    print("\033[31mInvalid choice!\033[m")
                 else:
                     break
             else:
-                logging.warning("\033[31mInvalid input!\033[m")
+                print("\033[31mInvalid input!\033[m")
 
         if choice == 1:
-            logging.info("\033[32mGenerating images...")
+            print("\033[32mGenerating images...")
             imgs_augmentation_train()
-            logging.info("\033[32mImages generated!\033[m")
+            print("\033[32mImages generated!\033[m")
 
         elif choice == 2:
-            logging.info("\033[32mRemoving images...\033[m")
+            print("\033[32mRemoving images...\033[m")
             remove_img_augmentation()
-            logging.info("\033[32mImages removed!\033[m")
+            print("\033[32mImages removed!\033[m")
 
         elif choice == 3:
-            logging.info("\033[32mConverting images...\033[m")
+            print("\033[32mConverting images...\033[m")
             png_converter()
-            logging.info("\033[32mImages converted!\033[m")
+            print("\033[32mImages converted!\033[m")
 
         elif choice == 4:
             return None

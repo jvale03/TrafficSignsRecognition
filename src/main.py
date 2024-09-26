@@ -83,6 +83,10 @@ def main():
             traf_sign = None
             img_opt = 0
 
+            model = Predict.my_load_model()
+            if not model:
+                return 
+            
             files = list_files()
             if files is None:
                 return 
@@ -100,7 +104,6 @@ def main():
 
             img_path = files[img_opt]
 
-            model = Predict.my_load_model()
             traf_sign = Predict.classify_img(model,img_path)
 
             print(traf_sign)
