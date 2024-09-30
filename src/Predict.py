@@ -59,7 +59,7 @@ def my_load_model(model_path="../Model/TrafficClassifier.keras"):
         model = load_model(model_path)
         print("\033[32mModel loaded!\033[m")
         return model
-    except (OSError, ValueError) as e:
+    except (OSError, ValueError, Exception) as e:
         logging.error(f"\033[31mError 'my_load_model': {e}\033[m")
         return None
 
@@ -70,7 +70,7 @@ def preprocess_image(img_path):
             img = img.resize((30, 30))
             img_array = np.array(img) / 255.0
             return np.expand_dims(img_array, axis=0)
-    except (OSError, ValueError) as e:
+    except (OSError, ValueError, Exception) as e:
         logging.error(f"\033[31mError loading image: {e} in 'preprocess_image'\033[m")
         return None
 
@@ -88,7 +88,7 @@ def classify_img(model, img_path):
     pred_classes = np.argmax(pred, axis=1).item()
     prob = np.max(pred)
 
-    if prob < 0.65:  # Accept only if the model is sure about is answer
+    if prob < 0.6:  # Accept only if the model is sure about is answer
         return "Undefined"
 
     if pred_classes + 1 not in classes:

@@ -4,6 +4,7 @@ import os
 from datetime import datetime
 from PIL import Image
 import logging
+import numpy as np
 
 # Configurar logging
 logging.basicConfig(level=logging.INFO)
@@ -20,7 +21,7 @@ def imgs_augmentation_train():
                 img_path = os.path.join(folder_path, img)
                 try:
                     gen_images(img_path, folder_path)
-                except OSError as e:
+                except (OSError, Exception) as e:
                     logging.error(f"\033[31mError generating images for {img_path}: {e}\033[m")
 
 def remove_img_augmentation():
@@ -34,7 +35,7 @@ def remove_img_augmentation():
                 if "image" in img:
                     try:
                         os.remove(img_path)
-                    except OSError as e:
+                    except (OSError, Exception) as e:
                         logging.error(f"\033[31mError removing image {img_path}: {e}\033[m")
 
 def png_converter():
@@ -51,30 +52,39 @@ def png_converter():
                             nome_ficheiro = os.path.splitext(image)[0]
                             img.save(os.path.join(folder_path, nome_ficheiro + ".png"))
                         os.remove(img_path)
-                    except OSError as e:
+                    except (OSError, Exception) as e:
                         logging.error(f"\033[31mError converting image {img_path}: {e}\033[m")
+
+def add_noise(img_array):
+    noise_factor = 0.05
+    noise = np.random.randn(*img_array.shape) * noise_factor
+    img_array = img_array + noise
+    img_array = np.clip(img_array, 0., 255.)
+    return img_array
 
 def gen_images(img_path, dir):
     datagen = ImageDataGenerator(
-        rotation_range=30,
+        rotation_range=20,
         width_shift_range=0.2,
         height_shift_range=0.2,
-        shear_range=0.2,
-        zoom_range=0.3,
-        brightness_range=(0.4, 1.6))
+        shear_range=0.3,
+        zoom_range=[0.65,1.15],
+        channel_shift_range=10.0,
+        brightness_range=(0.7, 1.3))
 
     img = load_img(img_path)
     img_array = img_to_array(img)
+    img_array = add_noise(img_array)
     img_array = img_array.reshape((1,) + img_array.shape)
 
-    i = 0
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    i=0
     for batch in datagen.flow(img_array, batch_size=1,
                               save_to_dir=dir,
                               save_prefix=f'image{timestamp}{i}', save_format='png'):
-        i += 1
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        if i < 6:
+        i+=1
+        if i >= 3:
             break
 
 def main():

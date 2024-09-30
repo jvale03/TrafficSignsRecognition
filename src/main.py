@@ -74,7 +74,7 @@ def main():
                 model, X_t1, X_t2, y_t1, y_t2 = CNNModel.model_builder()
                 CNNModel.model_compilation(model, X_t1, X_t2, y_t1, y_t2)
                 CNNModel.accuracy_test(model)
-                print("\032[32mModel trained and tested successfully.\033[m")
+                print("\033[32mModel trained and tested successfully.\033[m")
                 
             except Exception as e:
                 logging.error(f"\033[31mError during model training: {e}\033[m")
